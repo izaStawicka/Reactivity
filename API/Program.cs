@@ -1,3 +1,4 @@
+using API.Middleware;
 using Application.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
@@ -13,6 +14,8 @@ var builder = WebApplication.CreateBuilder(args);
         var app = builder.Build();
 
         // Configure the HTTP request pipeline.
+        app.UseMiddleware<ExceptionMiddleware>();
+
         if (app.Environment.IsDevelopment())
         {
             app.UseSwagger();
