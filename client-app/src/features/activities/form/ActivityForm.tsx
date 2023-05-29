@@ -3,7 +3,7 @@ import { Button, Header, Segment } from 'semantic-ui-react';
 import { useStore } from '../../../app/stores/store';
 import { observer } from 'mobx-react-lite';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { Activity } from '../../../app/models/activity';
+import { ActivityFormValues } from '../../../app/models/activity';
 import LoadingComponent from '../../../app/layout/LoadingComponent';
 import {v4 as uuid} from 'uuid';
 import { Formik,  Form} from 'formik';
@@ -18,21 +18,11 @@ import MyDateInput from '../../../app/common/form/MyDateInput';
 export default observer(function ActivityForm()
 {
     const {activityStore} = useStore();
-    const {updateActivity, createActivity, loading, loadingInitial, loadActivity} = activityStore;
+    const {updateActivity, createActivity, loadingInitial, loadActivity} = activityStore;
     const {id} = useParams();
     const navigate = useNavigate();
 
-    const[activity, setActivity] = useState<Activity>(
-        {
-            id:'',
-            title:'',
-            category:'',
-            description:'',
-            date: null,
-            city:'',
-            venue:''
-        }
-    );
+    const[activity, setActivity] = useState<ActivityFormValues>(new ActivityFormValues());
 
     const validationSchema = Yup.object({
         title: Yup.string().required('The activity title is required'),
@@ -45,15 +35,15 @@ export default observer(function ActivityForm()
 
     useEffect(() => {
         if(id) loadActivity(id).then((activity) => {
-            setActivity(activity!)
+            setActivity(new ActivityFormValues(activity))
         })
     }, [loadActivity, id])
 
 
-    function handleFormSubmit(activity: Activity)
+    function handleFormSubmit(activity: ActivityFormValues)
     {
-        if(activity.id.length === 0){
-            let newActivity: Activity = {
+        if(!activity.id){
+            let newActivity: ActivityFormValues = {
                 ...activity,
                 id: uuid() 
             }
@@ -78,7 +68,7 @@ export default observer(function ActivityForm()
                         <Header sub content='Location details' color='teal'/>
                         <MyTextInput placeholder='City'  name='city'/>
                         <MyTextInput placeholder='Venue' name='venue'/>
-                        <Button loading={loading} floated='right' positive type='submit'  content='Submit'
+                        <Button  floated='right' positive type='submit' loading={isSubmitting}  content='Submit'
                             disabled={!isValid || !dirty || isSubmitting}/>
                         <Button as={Link} to='/activities' floated='right' type='button' content='Cancel'/>
                 </Form> 
