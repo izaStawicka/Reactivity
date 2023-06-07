@@ -5,7 +5,7 @@ import { Button, Header, Image, Item, Label, Segment } from 'semantic-ui-react';
 import { Link } from 'react-router-dom';
 import { format } from 'date-fns';
 import { useStore } from '../../../app/stores/store';
-import { act } from '@testing-library/react';
+
 
 const activityImageStyle = {
     filter: 'brightness(30%)'

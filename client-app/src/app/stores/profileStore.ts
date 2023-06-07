@@ -63,6 +63,7 @@ export default class ProfileStore
         try {
             await agent.Profiles.setMain(photo.id);
             store.userStore.setImage(photo.url);
+            store.activityStore.loadActivities();
             runInAction(() => {
                 if(this.profile && this.profile.photos){
                     this.profile.photos.find(x=> x.isMain)!.isMain = false;
@@ -91,5 +92,23 @@ export default class ProfileStore
             toast.error('Problem deleting photo');
             runInAction(() => this.loading = false)
         }
+    }
+
+    updateProfile = async (profile: Partial<Profile> ) => {
+        this.loading = true;
+        try {
+            await agent.Profiles.editProfile(profile);
+            store.activityStore.loadActivities();
+            runInAction(() => {
+                if(this.profile?.displayName && profile.displayName !== store.userStore.user?.displayName){
+                    store.userStore.setDisplayName(profile.displayName!);
+                }
+                this.profile = {...this.profile, ...profile as Profile}
+                this.loading = false;
+            })
+        } catch (error) {
+           console.log(error);
+           runInAction(() => this.loading = false)
+        } 
     }
 }
