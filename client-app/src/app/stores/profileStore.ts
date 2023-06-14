@@ -1,4 +1,4 @@
-import { makeAutoObservable, runInAction } from "mobx";
+import { makeAutoObservable, runInAction, reaction } from "mobx";
 import { Photo, Profile } from "../models/profile";
 import agent from "../api/agent";
 import { store } from "./store";
@@ -10,10 +10,29 @@ export default class ProfileStore
     loadingProfile = false;
     uploading =  false;
     loading = false;
+    followings: Profile[] = [];
+    loadingFollowings = false;
+    activeTab = 0;
 
     constructor(){
         makeAutoObservable(this)
+
+        reaction(
+            () => this.activeTab,
+            activeTab => {
+                if(activeTab === 3 || activeTab === 4){
+                    const predicate = activeTab === 3 ? 'followers' : 'following';
+                    this.getFollowings(predicate);
+                }else{
+                    this.followings = [];
+                }           
+            }
+        )
     }
+
+   setActiveTab = (activeTab: any) => {
+    this.activeTab = activeTab;
+   }
 
     get isCurrentUser() {
         if(this.profile && store.userStore.user){
@@ -110,5 +129,48 @@ export default class ProfileStore
            console.log(error);
            runInAction(() => this.loading = false)
         } 
+    }
+
+    updateFollowing = async(userName: string, following: boolean) => {
+        this.loading = true;
+        try {
+            await agent.Profiles.updateFollowing(userName);
+            store.activityStore.updateFollowingAttendees(userName);
+            runInAction(() => {
+                if(this.profile && this.profile.userName === userName && this.profile.userName !== store.userStore.user?.userName){
+                    following ? this.profile.followersCount++ : this.profile.followersCount--;
+                    this.profile.isFollowing = !this.profile.isFollowing;
+                }
+                if(this.profile && this.profile.userName === store.userStore.user?.userName){
+                    following ? this.profile.followingsCount++ : this.profile.followingsCount--;
+                }
+                this.followings.forEach(profile => {
+                    if(profile.userName === userName){
+                        profile.isFollowing ? profile.followersCount-- : profile.followersCount++;
+                        profile.isFollowing = !profile.isFollowing;
+                    }
+                })
+                this.loading = false;
+            })
+        } catch (error) {
+            console.log(error);
+            runInAction(() => {
+                this.loading = false;
+            })
+        }
+    }
+
+    getFollowings = async(predicate: string) => {
+        this.loadingFollowings = true;
+        try {
+            const followings = await agent.Profiles.getFollowings(this.profile!.userName, predicate);
+            runInAction(()=> {
+                this.followings = followings;
+                this.loadingFollowings = false;
+            })
+        } catch (error) {
+            console.log(error);
+            runInAction(() => this.loadingFollowings = false)
+        }
     }
 }
