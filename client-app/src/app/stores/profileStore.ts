@@ -3,6 +3,7 @@ import { Photo, Profile } from "../models/profile";
 import agent from "../api/agent";
 import { store } from "./store";
 import { toast } from "react-toastify";
+import { ActivityUserDto } from "../models/activityUserDto";
 
 export default class ProfileStore
 {
@@ -13,6 +14,8 @@ export default class ProfileStore
     followings: Profile[] = [];
     loadingFollowings = false;
     activeTab = 0;
+    userActivities: ActivityUserDto[] = [];
+    loadingActivities = false;
 
     constructor(){
         makeAutoObservable(this)
@@ -28,6 +31,20 @@ export default class ProfileStore
                 }           
             }
         )
+    }
+
+    getEvents = async (userName: string, predicate?: string) => {
+        this.loadingActivities = true;
+        try {
+            var activities =  await agent.Profiles.getEvents(userName, predicate!);
+            runInAction(() => {
+                this.loadingActivities = false;
+                this.userActivities = activities;
+            })
+        } catch (error) {
+            console.log(error);
+            runInAction(() => this.loadingActivities = false)
+        }
     }
 
    setActiveTab = (activeTab: any) => {

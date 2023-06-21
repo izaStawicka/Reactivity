@@ -23,6 +23,13 @@ namespace Application.Core
             .ForMember(x=> x.IsFollowing, o=> o.MapFrom(s=> s.AppUser.Followers.Any(x=> x.Observer.UserName == currentUserName)))
             .ForMember(x=> x.FollowersCount, o=> o.MapFrom(s=> s.AppUser.Followers.Count))
             .ForMember(x=> x.FollowingCount, o=> o.MapFrom(s=> s.AppUser.Followings.Count));
+            
+            CreateMap<ActivityAttendee, Profiles.ActivityUserDto>()
+            .ForMember(x=> x.Id, o=> o.MapFrom(x=> x.ActivityId))
+            .ForMember(x=> x.Title, o=> o.MapFrom(x=> x.Activity.Title))
+            .ForMember(x=> x.Category, o=> o.MapFrom(x=> x.Activity.Category))
+            .ForMember(x=> x.Date, o=> o.MapFrom(x=> x.Activity.Date))
+            .ForMember(x=> x.HostUserName, o=> o.MapFrom(x=> x.Activity.Attendees.FirstOrDefault(x=> x.IsHost).AppUser.UserName));
 
             CreateMap<AppUser, Profiles.Profile>()
             .ForMember(x=> x.Image, o=> o.MapFrom(s=> s.Photos.FirstOrDefault(x=> x.IsMain).Url))

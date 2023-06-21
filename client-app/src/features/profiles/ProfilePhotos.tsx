@@ -24,7 +24,7 @@ export default observer(function ProfilePhotos({profile}: Props){
         setMain(photo);
     }
 
-    function handleDeletePhoto(photo: Photo, e: SyntheticEvent<HTMLButtonElement>){
+    function handleDeletePhoto(photo: Photo, e: SyntheticEvent<HTMLButtonElement>){ 
         setTarget(e.currentTarget.name);
         deletePhoto(photo);
     }
