@@ -34,7 +34,7 @@ namespace Application.Profiles
             
                 if(request.Predicate == "past")
                 {
-                    activities = activities.Where(x=> x.Date < DateTime.Now);
+                    activities = activities.Where(x=> x.Date < DateTime.UtcNow);
                 }
 
                 if(request.Predicate == "hosting")

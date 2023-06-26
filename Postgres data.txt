@@ -1,0 +1,8 @@
+Postgres cluster reactivitiesis-db created
+  Username:    postgres
+  Password:    u2d3SevfrLoFrl3
+  Hostname:    reactivitiesis-db.internal
+  Flycast:     fdaa:2:6974:0:1::2
+  Proxy port:  5432
+  Postgres port:  5433
+  Connection string: postgres://postgres:u2d3SevfrLoFrl3@reactivitiesis-db.flycast:5432
