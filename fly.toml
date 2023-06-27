@@ -1,4 +1,4 @@
-# fly.toml app configuration file generated for reactivitiesis on 2023-06-26T14:11:44+02:00
+# fly.toml app configuration file generated for reactivitiesis on 2023-06-27T09:42:43+02:00
 #
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 #
@@ -10,9 +10,9 @@ primary_region = "bog"
   image = "izastawicka/reactivities:latest"
 
 [env]
-  ASPNETCORE_URLS="http://+:8080"
-  Cloudinary__CloudName="dd0rw0iej"
-  Cloudinary__ApiKey="571546913534319"
+  ASPNETCORE_URLS = "http://+:8080"
+  Cloudinary__ApiKey = "571546913534319"
+  Cloudinary__CloudName = "dd0rw0iej"
 
 [http_service]
   internal_port = 8080
