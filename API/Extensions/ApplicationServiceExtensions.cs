@@ -59,7 +59,7 @@ namespace Application.Extensions
 
             services.AddCors(opt=>{
                 opt.AddPolicy("CorsPolicy", policy=>{
-                    policy.AllowAnyMethod().AllowAnyHeader().AllowCredentials().WithOrigins("http://localhost:3000");
+                    policy.AllowAnyMethod().AllowAnyHeader().AllowCredentials().WithOrigins("http://localhost:3000", "https://localhost:3000");
                 });
             });
 
