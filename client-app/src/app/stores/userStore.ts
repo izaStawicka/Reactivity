@@ -7,9 +7,25 @@ import { router } from "../router/Routes";
 
 export default class UserStore{
     user: User|null = null;
+    fbLoading = false;
 
     constructor() {
         makeAutoObservable(this);
+    }
+
+    facebookLogin = async(accessToken: string) => {
+        try {
+            this.fbLoading = true;
+            const user = await agent.Account.fbLogin(accessToken);
+            store.commonStore.setToken(user.token);
+            runInAction(() => {
+                this.fbLoading = false;
+                this.user = user;
+            })
+        } catch (error) {
+            console.log(error);
+            runInAction(()=>this.fbLoading = false)
+        }
     }
 
     get isLoggedIn(){

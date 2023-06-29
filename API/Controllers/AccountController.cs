@@ -15,12 +15,20 @@ namespace API.Controllers
     {
         private readonly UserManager<AppUser> _userManager;
         private readonly TokenService _tokenService;
+        private readonly IConfiguration _config;
+        private readonly HttpClient _httpClient;
 
-        public AccountController(UserManager<AppUser> userManager, TokenService tokenService)
+        public AccountController(UserManager<AppUser> userManager, TokenService tokenService, IConfiguration config)
         {
+            _config = config;
+            _httpClient = new HttpClient{
+                BaseAddress = new System.Uri("https://graph.facebook.com")
+            };
             _tokenService = tokenService;
             _userManager = userManager;
         }
+
+
 
         [AllowAnonymous]
         [HttpPost("login")]
